@@ -45,7 +45,7 @@ namespace IDP.Repositories
             {
                 connection.Open();
                 var query = connection.Query(
-                    @"INSERT INTO USERS (username, password_hash, password_salt)
+                    @"INSERT INTO USERS (username, password_hash, password_salt) 
                         VALUES (@Username, @PasswordHash, @PasswordSalt);
                     ", newUser);
                 return newUser;
