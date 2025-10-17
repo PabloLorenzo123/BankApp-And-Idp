@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace IDP.Entities
+{
+    public class AuthorizationCode
+    {
+        /// <summary>
+        /// Identifier, this is the code the client uses to exchange it by an access or an identity token.
+        /// </summary>
+        public string Code { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The user who authenticated
+        /// </summary>
+        public int UserId { get; set; }
+
+        /// <summary>
+        /// OAuth Client Id
+        /// </summary>
+        public string OAuthClientId { get; set; } = string.Empty;
+    }
+}
