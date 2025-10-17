@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace IDP.Entities.DTOs
@@ -15,16 +16,19 @@ namespace IDP.Entities.DTOs
         /// What algorithm was used to sign the token. This is useful in cases where the client needs to validate
         /// The token's integrity by using a public key.
         /// </summary>
+        [JsonPropertyName("alg")]
         public string Alg { get; set; } = string.Empty;
 
         /// <summary>
         /// Type
         /// </summary>
+        [JsonPropertyName("typ")]
         public string Typ { get; set; } = "JWT";
 
         /// <summary>
         /// Key Id, used for apis to retrieve JWKS from the IDP and then using the matching public key to verify the signature/
         /// </summary>
+        [JsonPropertyName("kid")]
         public string Kid { get; set; } = string.Empty;
     }
 
@@ -38,48 +42,57 @@ namespace IDP.Entities.DTOs
         /// <summary>
         /// Unique identifier for the user.
         /// </summary>
+        [JsonPropertyName("sub")]
         public string Sub { get; set; } = string.Empty;
 
         /// <summary>
         /// Who emitted and signed the token.
         /// </summary>
+        [JsonPropertyName("iss")]
         public string Iss { get; set; } = string.Empty;
 
         /// <summary>
         /// Who the token is intended for.
         /// </summary>
+        [JsonPropertyName("aud")]
         public string Aud { get; set; } = string.Empty;
 
         /// <summary>
         /// Expiration time (unix timestamp)
         /// </summary>
+        [JsonPropertyName("exp")]
         public double Exp { get; set; }
 
         /// <summary>
         /// Don't use token before this unix time.
         /// </summary>
+        [JsonPropertyName("nbf")]
         public double Nbf { get; set; }
 
         /// <summary>
         /// Issued at time.
         /// </summary>
+        [JsonPropertyName("iat")]
         public double Iat { get; set; }
 
         /// <summary>
         /// Jwt unique identifier.
         /// </summary>
+        [JsonPropertyName("jti")]
         public Guid Jti { get; set; }
 
         // Additional fields.
-        
+
         /// <summary>
         /// Roles
         /// </summary>
+        [JsonPropertyName("roles")]        
         public string[] Roles { get; set; } = [];
 
         /// <summary>
         /// Scopes.
         /// </summary>
+        [JsonPropertyName("scopes")]
         public string[] Scopes { get; set; } = [];
     }
 
