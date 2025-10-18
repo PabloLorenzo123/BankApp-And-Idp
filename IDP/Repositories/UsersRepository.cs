@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using Dapper;
 using IDP.Entities;
 using IDP.Entities.DTOs;
-using Microsoft.Data.SqlClient;
+using IDP.Extensions;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
+using Memento.Data;
 
 namespace IDP.Repositories
 {
@@ -60,8 +57,7 @@ namespace IDP.Repositories
         {
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
-            var query = "SELECT user_id as Id, username, password_hash as PasswordHash, password_salt as PasswordSalt FROM USER WHERE username = @Username";
-            var command = connection.QuerySingleOrDefault<User>(query, new { Username = username });
+            var command = connection.QuerySingleFromFile<User>(Queries.IDPQueries.QueryUserByUsername, new { Username = username });
             if (command == null)
             {
                 throw new InvalidOperationException("User not found.");

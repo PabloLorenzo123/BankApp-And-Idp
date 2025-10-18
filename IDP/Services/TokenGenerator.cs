@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace IDP
+namespace IDP.Services
 {
     public class TokenGenerator
     {

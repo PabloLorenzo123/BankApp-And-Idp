@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace IDP
+namespace IDP.Services
 {
     public class IDPService(UsersRepository usersRepository)
     {

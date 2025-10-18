@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using IDP;
-using IDP.Entities.DTOs;
+﻿using IDP.Entities.DTOs;
 using IDP.Repositories;
+using IDP.Services;
 using Memento;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 public static class Program
 {
@@ -12,6 +13,9 @@ public static class Program
     public static void Main()
     {
         _services = ConstructDiContainer();
+        var assemblyLocation = Assembly.GetExecutingAssembly().Location;
+        var assemblyDirectory = Path.GetDirectoryName(assemblyLocation);
+        Console.WriteLine(assemblyDirectory);
         Console.WriteLine("1) Register an user in the IDP");
         Console.WriteLine("2) Use Memento App");
         int option = int.TryParse(Console.ReadLine(), out var input)? input: throw new Exception("Please provide a number");

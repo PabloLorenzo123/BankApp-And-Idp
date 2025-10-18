@@ -1,5 +1,5 @@
-﻿using IDP;
-using IDP.Entities.DTOs;
+﻿using IDP.Entities.DTOs;
+using IDP.Services;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;

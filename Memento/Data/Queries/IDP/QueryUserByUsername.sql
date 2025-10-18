@@ -1,0 +1,1 @@
+﻿SELECT "user_id" as Id, username as Username, password_hash as PasswordHash, password_salt as PasswordSalt FROM "USERS" WHERE "username" = @Username;
