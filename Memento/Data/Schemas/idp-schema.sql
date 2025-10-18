@@ -16,6 +16,7 @@ CREATE TABLE AUTHORIZATION_CODE (
 	"authorization_code" varchar(255),
 	"oauth_client_id" VARCHAR(255),
 	"user_id" INT,
+	"scopes" VARCHAR(255),
 	PRIMARY KEY ("authorization_code"),
 	FOREIGN KEY ("oauth_client_id") REFERENCES "OAUTH_CLIENT"("client_id"),
 	FOREIGN KEY ("user_id") REFERENCES "USER"("user_id")

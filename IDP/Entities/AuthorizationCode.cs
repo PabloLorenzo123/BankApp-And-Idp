@@ -22,5 +22,10 @@ namespace IDP.Entities
         /// OAuth Client Id
         /// </summary>
         public string OAuthClientId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Defines the permissions and access levels the bearer is granted.
+        /// </summary>
+        public string Scopes { get; set; } = string.Empty;
     }
 }
