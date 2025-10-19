@@ -16,29 +16,17 @@
 
             public static readonly string GetUserById = Path.Combine(BaseDir, "QueryUserById.sql");
 
-            public static readonly string RegisterUser = Path.Combine(
-                BaseDir, "RegisterUser.sql"
-            );
+            public static readonly string RegisterUser = Path.Combine(BaseDir, "RegisterUser.sql");
 
-            public static readonly string GetUsers = Path.Combine(
-                BaseDir, "GetAllUsers.sql"
-             );
+            public static readonly string GetUsers = Path.Combine(BaseDir, "GetAllUsers.sql");
 
-            public static readonly string GetOAuthClientById = Path.Combine(
-                BaseDir, "GetOAuthClient.sql"
-             );
+            public static readonly string GetOAuthClientById = Path.Combine(BaseDir, "GetOAuthClient.sql");
 
-            public static readonly string CreateOAuthClient = Path.Combine(
-                BaseDir, "CreateOAuthClient.sql"
-             );
+            public static readonly string CreateOAuthClient = Path.Combine(BaseDir, "CreateOAuthClient.sql");
 
-            public static readonly string GetAuthCode = Path.Combine(
-                BaseDir, "GetAuthCode.sql"
-             );
+            public static readonly string GetAuthCode = Path.Combine(BaseDir, "GetAuthCode.sql");
 
-            public static readonly string CreateAuthCode = Path.Combine(
-                BaseDir, "CreateAuthorizationCode.sql"
-             );
+            public static readonly string CreateAuthCode = Path.Combine(BaseDir, "CreateAuthorizationCode.sql");
         }
 
     }
