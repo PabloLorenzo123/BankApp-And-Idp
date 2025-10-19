@@ -47,6 +47,6 @@ CREATE TABLE "authorization_codes" (
 	"user_id" INTEGER,
 	"scopes" VARCHAR(255),
 	PRIMARY KEY ("authorization_code"),
-	FOREIGN KEY ("oauth_client_id") REFERENCES "OAUTH_CLIENT"("client_id"),
-	FOREIGN KEY ("user_id") REFERENCES "USER"("user_id")
+	FOREIGN KEY ("oauth_client_id") REFERENCES "oauth_clients"("client_id"),
+	FOREIGN KEY ("user_id") REFERENCES "users"("user_id")
 );

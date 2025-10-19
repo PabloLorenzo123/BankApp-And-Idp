@@ -1,13 +1,10 @@
-﻿using IDP.Entities.DTOs;
+﻿using IDP;
+using IDP.DTOs;
 using IDP.Services;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Memento
 {
@@ -20,13 +17,12 @@ namespace Memento
             ClientSecret = "secret",
             RedirectUri = "https://my-front.com/user-signed-in"
         };
-        private readonly OAuthService _oAuthService;
+        private readonly IDPApi _idpApi;
 
-        public Authentication(OAuthService oAuthService)
+        public Authentication(IDPApi idpApi)
         {
-            _oAuthService = oAuthService;
-            _oAuthService.RegisterOAuthClient(_clientConfiguration); // Register OAuthClient.
-            StartAuthorizationCodeFlow();
+            _idpApi = idpApi;
+            _idpApi.RegisterOAuthClient(_clientConfiguration); // Register OAuthClient.
         }
 
         /// <summary>
@@ -44,10 +40,9 @@ namespace Memento
             );
             Console.WriteLine("\nYou're prompted to enter your credentials and consent the use of the scopes.");
 
-            Console.WriteLine("Enter username: ");
-            string username = Console.ReadLine() ?? throw new InvalidOperationException("Username can't be null");
-            Console.WriteLine("Enter password: ");
-            string password = Console.ReadLine() ?? throw new InvalidOperationException("Password can't be null");
+            string username = Utils.PromptText("Enter username: ");
+            string password = Utils.PromptText("Enter password: ");
+
             Console.WriteLine($"Are you sure you want to provide ${_clientConfiguration.ClientId} full access to your account?");
             string consent = Console.ReadLine() ?? string.Empty;
 
@@ -56,13 +51,13 @@ namespace Memento
                 return;
             }
 
-            var authorizationCode = _oAuthService.ValidateCredentialsAndGetAuthCode(username, password, _clientConfiguration.ClientId);
+            var authorizationCode = _idpApi.ValidateCredentialsAndGetAuthCode(username, password, _clientConfiguration.ClientId);
 
             Console.WriteLine($"You're being redirected to: {_clientConfiguration.RedirectUri}?authorization_code={authorizationCode}");
             Console.WriteLine("Client (frontend) sends token to API, and API receives it.");
             Console.WriteLine("Api Contacts the IDP server and ask to exchange the authorization code for an access token, using its OAuth Credentials.");
 
-            var accesToken = _oAuthService.GetAsymmetricAuthToken(authorizationCode, _clientConfiguration);
+            var accesToken = _idpApi.GetAsymmetricAuthToken(authorizationCode, _clientConfiguration);
             Console.WriteLine("JWT Token: " + accesToken);
 
             Console.WriteLine("The API now needs to validate that the token really comes from the IDP (in this case the one who grants and bear the token are different servers).");
@@ -90,7 +85,7 @@ namespace Memento
                 Signature = signature
             };
 
-            var jwks = _oAuthService.GetJWKS();
+            var jwks = _idpApi.GetJWKS();
             var publicKey = jwks.FirstOrDefault(x => x.kid == token.Header.Kid).key ?? throw new Exception("Could not retrieve public key.");
 
             // When we encrypt this payload and header, the signing key should match the original one.

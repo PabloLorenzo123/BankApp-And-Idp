@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memento", "Memento\Memento.csproj", "{F4F2665B-C5DE-45D1-BD52-DB408F3451EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDP", "IDP\IDP.csproj", "{15759FEC-6474-4AB4-A352-B01F41119E13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{86CF454B-DE26-4393-8838-4C2F747EE8C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{15759FEC-6474-4AB4-A352-B01F41119E13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15759FEC-6474-4AB4-A352-B01F41119E13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15759FEC-6474-4AB4-A352-B01F41119E13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86CF454B-DE26-4393-8838-4C2F747EE8C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86CF454B-DE26-4393-8838-4C2F747EE8C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86CF454B-DE26-4393-8838-4C2F747EE8C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86CF454B-DE26-4393-8838-4C2F747EE8C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

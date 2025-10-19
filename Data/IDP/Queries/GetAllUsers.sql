@@ -1,0 +1,1 @@
+﻿SELECT "user_id", "username" FROM "USERS";

@@ -1,21 +1,16 @@
-﻿using IDP.Entities.DTOs;
-using IDP.Repositories;
+﻿using IDP.Repositories;
 using IDP.Services;
 using Memento;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 public static class Program
 {
     private static IServiceProvider _services = new ServiceCollection().BuildServiceProvider();
-
     public static void Main()
     {
         _services = ConstructDiContainer();
-        var assemblyLocation = Assembly.GetExecutingAssembly().Location;
-        var assemblyDirectory = Path.GetDirectoryName(assemblyLocation);
-        Console.WriteLine(assemblyDirectory);
+
         Console.WriteLine("1) Register an user in the IDP");
         Console.WriteLine("2) Use Memento App");
         int option = int.TryParse(Console.ReadLine(), out var input)? input: throw new Exception("Please provide a number");
@@ -31,7 +26,7 @@ public static class Program
         }
     }
 
-    private static void RegisterUser() => _services.GetRequiredService<IDPService>().SignUp();
+    private static void RegisterUser() => _services.GetRequiredService<IDPApi>().SignUp();
     private static void Authenticate() => _services.GetRequiredService<Authentication>().StartAuthorizationCodeFlow();
 
     private static IServiceProvider ConstructDiContainer()
@@ -45,7 +40,7 @@ public static class Program
 
         // Services.
         services.AddScoped<UsersRepository>();
-        services.AddScoped<IDPService>();
+        services.AddScoped<IDPApi>();
         services.AddScoped<OAuthService>();
         services.AddScoped<TokenGenerator>();
         services.AddScoped<Authentication>();

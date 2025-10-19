@@ -1,0 +1,1 @@
+﻿SELECT "client_id" AS ClientId, "client_secret" AS ClientSecret FROM OAUTH_CLIENTS WHERE client_id = @ClientId;

@@ -1,0 +1,1 @@
+﻿INSERT INTO OAUTH_CLIENTS (client_id, client_secret) VALUES (@ClientId, @ClientSecret);

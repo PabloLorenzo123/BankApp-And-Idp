@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IDP.Entities.DTOs
+namespace IDP.DTOs
 {
     /// <summary>
     /// Configuration settings for an OAuth client.

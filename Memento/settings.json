@@ -1,5 +1,6 @@
 {
     "ConnectionStrings": {
-        "Default": "Data Source=C:\\Users\\pablo\\Documents\\Software Engineering\\CS2025\\CS50SQL\\capstone\\Memento\\Data\\idp.db"
+        "IDP": "Data Source=C:\\Users\\pablo\\Documents\\Software Engineering\\CS2025\\CS50SQL\\capstone\\Data\\IDP\\idp.db",
+        "BANK": "Data Source=C:\\Users\\pablo\\Documents\\Software Engineering\\CS2025\\CS50SQL\\capstone\\Data\\Bank\\bank.db"
     }
 }

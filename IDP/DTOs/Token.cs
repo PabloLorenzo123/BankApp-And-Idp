@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace IDP.Entities.DTOs
+namespace IDP.DTOs
 {
     public static class Token
     {

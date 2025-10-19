@@ -1,30 +1,22 @@
-﻿using IDP.Entities;
-using IDP.Entities.DTOs;
-using Microsoft.Extensions.Configuration;
+﻿using IDP.DTOs;
+using Data.IDP.Entities;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace IDP.Services
 {
     public class TokenGenerator
     {
-        private readonly string _connectionString;
-
         private const string _symmetricSigningKey = "key-used-for-both-signing-and-validating";
         
         public readonly byte[] publicKey;
         private readonly byte[] _privateKey;
 
-        public TokenGenerator(IConfiguration configuration)
+        public TokenGenerator()
         {
             (publicKey, _privateKey) = GenerateKeyPair();
-            _connectionString = configuration.GetConnectionString("default") ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public (Token.JWTToken token, string encodedToken) CreateAuthTokenUsingSymmetricSigning(User user, AuthorizationCode authCode)

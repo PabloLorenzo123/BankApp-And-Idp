@@ -1,9 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using Dapper;
-using IDP.Entities;
-using IDP.Entities.DTOs;
+using IDP.DTOs;
+using Data.IDP.Entities;
+using Data.Extensions;
 using IDP.Repositories;
+using Data;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 
@@ -11,22 +12,20 @@ namespace IDP.Services
 {
     public class OAuthService(IConfiguration configuration, UsersRepository usersRepository, TokenGenerator tokenGenerator)
     {
-        private readonly string _connectionString = configuration.GetConnectionString("default") ?? throw new InvalidOperationException("Connection string 'Default' not found.");
-
-        public IEnumerable<(string kid, byte[] key)> GetJWKS() => [
-            ("KEY-1", tokenGenerator.publicKey),
-         ];
+        private readonly string _connectionString = configuration.GetConnectionString("IDP") ?? throw new InvalidOperationException("Connection string 'Default' not found.");
 
         public void RegisterOAuthClient(OAuthClientConfiguration clientConfiguration)
         {
             using var connectionn = new SqliteConnection(_connectionString);
             connectionn.Open();
 
-            var clientExists = connectionn.Query<OAuthClient>("SELECT * FROM OAUTH_CLIENTS WHERE client_id = @ClientId;", new { clientConfiguration.ClientId }).FirstOrDefault();
-            if (clientExists == null)
+            try
             {
-                var command = "INSERT INTO OAUTH_CLIENTS (client_id, client_secret) VALUES (@ClientId, @ClientSecret);";
-                connectionn.Execute(command, new {clientConfiguration.ClientId, clientConfiguration.ClientSecret});
+                connectionn.QuerySingleFromFile<OAuthClient>(Queries.IDPQueries.GetOAuthClientById, new { clientConfiguration.ClientId });
+            }
+            catch
+            {
+                connectionn.ExecuteFromFile(Queries.IDPQueries.CreateOAuthClient, new { clientConfiguration.ClientId, clientConfiguration.ClientSecret });
             }
         }
 
@@ -47,8 +46,7 @@ namespace IDP.Services
 
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
-            var cmd = "INSERT INTO AUTHORIZATION_CODE (authorization_code, oauth_client_id, user_id) VALUES (@AuthorizationCode, @OAuthClientId, @UserId);";
-            var command = connection.Execute(cmd, new { AuthorizationCode = authorizationCode, OAuthClientId = client_id, UserId = user.Id });
+            connection.ExecuteFromFile(Queries.IDPQueries.CreateAuthCode, new { AuthorizationCode = authorizationCode, OAuthClientId = client_id, UserId = user.Id });
 
             return authorizationCode;
         }
@@ -73,27 +71,16 @@ namespace IDP.Services
         {
             // Validate the authorization code is being used by the right person.
             using var connection = new SqliteConnection(_connectionString);
-            var authCode = connection.QueryFirstOrDefault<AuthorizationCode>(
-                @"SELECT authorization_codes as Code,
-                  oauth_client_id as OAuthClientId,
-                  user_id as UserId,
-                  scopes as Scopes
-                  FROM AUTHORIZATION_CODE
-                  WHERE code = @Code;",
-                new { Code = authorizationCode }) ?? throw new Exception("Could not find OAuth Client");
 
-            var oAuthClient = connection.QueryFirstOrDefault<OAuthClient>(
-                @"SELECT client_id as ClientId,
-                  client_secret as ClientSecret FROM OAUTH_CLIENTS WHERE client_id = @OAuthClientId", new { authCode.OAuthClientId }
-            ) ?? throw new Exception("Could not retrieve oauth client");
+            var authCode = connection.QuerySingleFromFile<AuthorizationCode>(Queries.IDPQueries.GetAuthCode, new { Code = authorizationCode });
+            var oAuthClient = connection.QuerySingleFromFile<OAuthClient>(Queries.IDPQueries.GetOAuthClientById, new { ClientId = authCode.OAuthClientId });
 
             // The client id from the api needs to match the client associated with the auth code, and the api's client secret needs to match the registered client secret for the associated oauth client.
-            if (!(authCode.OAuthClientId == oAuthClientConfiguration.ClientId && oAuthClientConfiguration.ClientSecret == oAuthClient.ClientSecret))
-            {
-                throw new Exception("The Api's OAuth Credentials don't match the ones associated with the Authorization Code.");
-            }
 
-            return authCode;
+            var clientIdMatch = authCode.OAuthClientId == oAuthClientConfiguration.ClientId;            // Validates the auth code is for the requesting user.
+            var clientSecretsMatch = oAuthClient.ClientSecret == oAuthClientConfiguration.ClientSecret; // Validates that the client knows the correct secret.
+
+            return clientIdMatch && clientSecretsMatch ? authCode: throw new Exception("The Api's OAuth Credentials don't match the ones associated with the Authorization Code.");
         }
     }
 }
