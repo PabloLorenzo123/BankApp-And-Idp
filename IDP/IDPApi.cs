@@ -1,8 +1,9 @@
 ﻿using IDP.DTOs;
 using Data.IDP.Entities;
 using IDP.Repositories;
+using IDP.Services;
 
-namespace IDP.Services
+namespace IDP
 {
     /// <summary>
     /// This services represents the IDP Api.
