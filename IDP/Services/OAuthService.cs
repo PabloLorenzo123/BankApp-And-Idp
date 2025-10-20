@@ -21,11 +21,11 @@ namespace IDP.Services
 
             try
             {
-                connectionn.QuerySingleFromFile<OAuthClient>(Queries.IDPQueries.GetOAuthClientById, new { clientConfiguration.ClientId });
+                connectionn.QuerySingleFromFile<OAuthClient>(Queries.IDP.GetOAuthClientById, new { clientConfiguration.ClientId });
             }
             catch
             {
-                connectionn.ExecuteFromFile(Queries.IDPQueries.CreateOAuthClient, new { clientConfiguration.ClientId, clientConfiguration.ClientSecret });
+                connectionn.ExecuteFromFile(Queries.IDP.CreateOAuthClient, new { clientConfiguration.ClientId, clientConfiguration.ClientSecret });
             }
         }
 
@@ -46,7 +46,7 @@ namespace IDP.Services
 
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
-            connection.ExecuteFromFile(Queries.IDPQueries.CreateAuthCode, new { AuthorizationCode = authorizationCode, OAuthClientId = client_id, UserId = user.Id });
+            connection.ExecuteFromFile(Queries.IDP.CreateAuthCode, new { AuthorizationCode = authorizationCode, OAuthClientId = client_id, UserId = user.Id });
 
             return authorizationCode;
         }
@@ -72,8 +72,8 @@ namespace IDP.Services
             // Validate the authorization code is being used by the right person.
             using var connection = new SqliteConnection(_connectionString);
 
-            var authCode = connection.QuerySingleFromFile<AuthorizationCode>(Queries.IDPQueries.GetAuthCode, new { Code = authorizationCode });
-            var oAuthClient = connection.QuerySingleFromFile<OAuthClient>(Queries.IDPQueries.GetOAuthClientById, new { ClientId = authCode.OAuthClientId });
+            var authCode = connection.QuerySingleFromFile<AuthorizationCode>(Queries.IDP.GetAuthCode, new { Code = authorizationCode });
+            var oAuthClient = connection.QuerySingleFromFile<OAuthClient>(Queries.IDP.GetOAuthClientById, new { ClientId = authCode.OAuthClientId });
 
             // The client id from the api needs to match the client associated with the auth code, and the api's client secret needs to match the registered client secret for the associated oauth client.
 

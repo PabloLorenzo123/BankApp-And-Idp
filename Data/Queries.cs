@@ -6,7 +6,7 @@
         private static string BaseDirectory => Path.Combine(
             GetParent(GetParent(GetParent(GetParent(Directory.GetCurrentDirectory())))), "Data");
 
-        public static class IDPQueries
+        public static class IDP
         {
             private static readonly string BaseDir = BaseDirectory + "/IDP/Queries";
 
@@ -29,5 +29,14 @@
             public static readonly string CreateAuthCode = Path.Combine(BaseDir, "CreateAuthorizationCode.sql");
         }
 
+        public static class Bank
+        {
+            public static readonly string BaseDir = BaseDirectory + "/Bank/Queries";
+
+            public static readonly string GetAccountById = Path.Combine(BaseDir, "GetAccountById.sql");
+            public static readonly string GetBankAccountByUserId = Path.Combine(BaseDir, "GetBankAccountByUserId.sql");
+            public static readonly string CreateBankAccount = Path.Combine(BaseDir, "CreateBankAccount.sql");
+            public static readonly string GetBalance = Path.Combine(BaseDir, "GetBalance.sql");
+        }
     }
 }

@@ -25,9 +25,9 @@ namespace Memento
         }
 
         /// <summary>
-        /// Implements the authorization code flow of OAuth 2.0.
+        /// Implements the authorization code flow of OAuth 2.0. in this case openid because it only proves identity.
         /// </summary>
-        public void StartAuthorizationCodeFlow()
+        public string GetIdentityTokenUsingAuthCodeFlow()
         {
             var oAuthFlow = "authorization_code";
             var scopes = string.Join(";", ["fullaccess"]);
@@ -42,12 +42,12 @@ namespace Memento
             string username = Utils.PromptText("Enter username: ");
             string password = Utils.PromptText("Enter password: ");
 
-            Console.WriteLine($"Are you sure you want to provide ${_clientConfiguration.ClientId} full access to your account?");
+            Console.WriteLine($"Are you sure you want to provide {_clientConfiguration.ClientId} full access to your account?");
             string consent = Console.ReadLine() ?? string.Empty;
 
             if (!consent.StartsWith("y", StringComparison.CurrentCultureIgnoreCase))
             {
-                return;
+                throw new Exception("User needs to give its consent");
             }
 
             var authorizationCode = _idpApi.ValidateCredentialsAndGetAuthCode(username, password, _clientConfiguration.ClientId);
@@ -64,25 +64,28 @@ namespace Memento
             if (ValidateToken(accesToken))
             {
                 _encodedJWTToken = accesToken;
-                Console.WriteLine("Confirmed JWT token is valid.");
+                return accesToken;
             } else
             {
-                Console.WriteLine("The JWT has been tampered with.");
-                return;
+                throw new Exception("The JWT has been tampered with.");
             }
         }
 
-        private bool ValidateToken(string encodedToken)
+        public Token.JWTToken DeseralizeToken(string encodedToken)
         {
             var tokenParts = encodedToken.Split('.').Take(2).Select(x => Base64UrlEncoder.Decode(x)).ToArray();
             var signature = Base64UrlEncoder.DecodeBytes(encodedToken.Split('.').Last());
 
-            var token = new Token.JWTToken
+            return new Token.JWTToken
             {
                 Header = JsonSerializer.Deserialize<Token.TokenHeader>(tokenParts[0]) ?? throw new InvalidOperationException("Could not parse the JWT header."),
                 Payload = JsonSerializer.Deserialize<Token.Payload>(tokenParts[1]) ?? throw new InvalidOperationException("Could not parse the JWT payload."),
                 Signature = signature
             };
+        }
+        private bool ValidateToken(string encodedToken)
+        {
+            var token = DeseralizeToken(encodedToken);
 
             var jwks = _idpApi.GetJWKS();
             var publicKey = jwks.FirstOrDefault(x => x.kid == token.Header.Kid).key ?? throw new Exception("Could not retrieve public key.");

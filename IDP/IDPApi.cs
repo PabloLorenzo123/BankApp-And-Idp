@@ -10,8 +10,6 @@ namespace IDP
     /// </summary>
     public class IDPApi(UsersRepository usersRepository, OAuthService oAuthService, TokenGenerator tokenGenerator)
     {
-        private readonly UsersRepository _usersRepository = usersRepository;
-
         /// <summary>
         /// Register an user
         /// </summary>
@@ -25,7 +23,7 @@ namespace IDP
             var password = Utils.PromptText("Enter password: ");
 
             // Using repository
-            var user = _usersRepository.Create(new CreateUserDto { Username = username, Password = password });
+            var user = usersRepository.Create(new CreateUserDto { Username = username, Password = password });
             Console.WriteLine($"User {user.Username} created with ID {user.Id}");
             return user;
         }
@@ -43,5 +41,7 @@ namespace IDP
         public string ValidateCredentialsAndGetAuthCode(string username, string password, string client_id) => oAuthService.ValidateCredentialsAndGetAuthCode(username, password, client_id);
 
         public string GetAsymmetricAuthToken(string authorizationCode, OAuthClientConfiguration client) => oAuthService.GetAsymmetricAuthToken(authorizationCode, client);
+
+        public User GetUserByUsername(string username) => usersRepository.Get(username);
     }
 }

@@ -7,8 +7,8 @@ CREATE TABLE "accounts" (
 
 CREATE TABLE "transactions" (
 	"transaction_id" INTEGER,
-	"amount" INTEGER,
 	"account_id" INTEGER,
+	"amount" INTEGER,
 	"type" VARCHAR(250) CHECK("type" in ('DEPOSIT', 'WITHDRAWAL')),
 	"date" DATETIME DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY ("transaction_id"),
@@ -26,7 +26,7 @@ CREATE TABLE "transfers" (
 	FOREIGN KEY ("receiver_id") REFERENCES "accounts"("account_id")
 );
 
--- Views
+-- VIEWS
 CREATE VIEW "Balance" AS
 WITH
 debit AS (
@@ -54,6 +54,8 @@ SELECT
 FROM "debit"
 JOIN "credit" ON "debit"."AccountId" = "credit"."AccountId";
 
+
+-- Data Seed
 
 INSERT INTO accounts (account_id, user_id) VALUES
 (1, 101), (2, 102), (3, 103), (4, 104), (5, 105),

@@ -32,8 +32,8 @@ namespace IDP.Services
 
             var payload = new Token.Payload
             {
-                Iss = "Photos App",
-                Aud = "Memento",
+                Iss = "Bank IDP",
+                Aud = "BANK Online App",
                 Sub = user.Username,
                 Iat = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds(),
                 Exp = ((DateTimeOffset)DateTime.UtcNow.AddHours(24)).ToUnixTimeSeconds(),
@@ -69,8 +69,8 @@ namespace IDP.Services
 
             var payload = new Token.Payload
             {
-                Iss = "Photos App",
-                Aud = "Memento",
+                Iss = "Bank IDP",
+                Aud = "BANK Online App",
                 Sub = user.Username,
                 Iat = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds(),
                 Exp = ((DateTimeOffset)DateTime.UtcNow.AddHours(24)).ToUnixTimeSeconds(),

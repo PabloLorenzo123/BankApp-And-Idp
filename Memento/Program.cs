@@ -1,4 +1,5 @@
-﻿using IDP;
+﻿using Bank;
+using IDP;
 using IDP.Repositories;
 using IDP.Services;
 using Memento;
@@ -12,23 +13,36 @@ public static class Program
     {
         _services = ConstructDiContainer();
 
-        Console.WriteLine("1) Register an user in the IDP");
-        Console.WriteLine("2) Use Memento App");
-        int option = int.TryParse(Console.ReadLine(), out var input)? input: throw new Exception("Please provide a number");
-
-        switch (option)
+        while (true)
         {
-            case 1:
-                RegisterUser();
-                break;
-            case 2:
-                Authenticate();
-                break;
+            Console.WriteLine("1) Register an user in the IDP");
+            Console.WriteLine("2) Use Bank App");
+            int option = int.TryParse(Console.ReadLine(), out var input) ? input : throw new Exception("Please provide a number");
+
+            switch (option)
+            {
+                case 1:
+                    RegisterUser();
+                    break;
+                case 2:
+                    Authenticate();
+                    break;
+            }
         }
     }
 
     private static void RegisterUser() => _services.GetRequiredService<IDPApi>().SignUp();
-    private static void Authenticate() => _services.GetRequiredService<Authentication>().StartAuthorizationCodeFlow();
+    private static void Authenticate()
+    {
+        var authentication = _services.GetRequiredService<Authentication>();
+        var bankApi = _services.GetRequiredService<BankApi>();
+
+        var identityToken = authentication.DeseralizeToken(authentication.GetIdentityTokenUsingAuthCodeFlow());
+        var bankAccount = bankApi.GetBankAccount(identityToken.Payload.Sub);
+
+        Console.WriteLine($"\nWelcome to the Bank App You're logged in as {bankAccount.AccountId}");
+        Console.WriteLine("\nBalance: " + bankApi.GetBalance(bankAccount));
+    }
 
     private static IServiceProvider ConstructDiContainer()
     {
@@ -42,6 +56,7 @@ public static class Program
         // Services.
         services.AddScoped<UsersRepository>();
         services.AddScoped<IDPApi>();
+        services.AddScoped<BankApi>();
         services.AddScoped<OAuthService>();
         services.AddScoped<TokenGenerator>();
         services.AddScoped<Authentication>();

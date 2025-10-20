@@ -18,7 +18,7 @@ namespace IDP.Repositories
         {
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
-            return connection.QueryFromFile<User>(Queries.IDPQueries.GetUsers, null);
+            return connection.QueryFromFile<User>(Queries.IDP.GetUsers, null);
         }
 
         public User Create(CreateUserDto createUserDto)
@@ -33,22 +33,22 @@ namespace IDP.Repositories
 
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
-            connection.ExecuteFromFile(Queries.IDPQueries.RegisterUser, newUser);
-            return connection.QuerySingleFromFile<User>(Queries.IDPQueries.QueryUserByUsername, new { createUserDto.Username });
+            connection.ExecuteFromFile(Queries.IDP.RegisterUser, newUser);
+            return connection.QuerySingleFromFile<User>(Queries.IDP.QueryUserByUsername, new { createUserDto.Username });
         }
 
         public User Get(string username)
         {
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
-            return connection.QuerySingleFromFile<User>(Queries.IDPQueries.QueryUserByUsername, new { Username = username });
+            return connection.QuerySingleFromFile<User>(Queries.IDP.QueryUserByUsername, new { Username = username });
         }
 
         public User Get(int id)
         {
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
-            return connection.QuerySingleFromFile<User>(Queries.IDPQueries.GetUserById, new { Id = id });
+            return connection.QuerySingleFromFile<User>(Queries.IDP.GetUserById, new { Id = id });
         }
     }
 }
