@@ -15,12 +15,12 @@ namespace Bank
     public class BankApi(IConfiguration configuration, IDPApi idpApi)
     {
         private readonly string _connectionString = configuration.GetConnectionString("bank") ?? throw new Exception("Bank's connection string not found.");
-        
+
         public float GetBalance(Account bankAccount)
         {
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
-            return connection.QuerySingleFromFile<BalanceQuery>(Queries.Bank.GetBalance, new { bankAccount.AccountId} ).Balance;
+            return connection.QuerySingleFromFile<BalanceQuery>(Queries.Bank.GetBalance, new { bankAccount.AccountId }).Balance;
         }
 
         public Account GetBankAccount(string tokenSub)
@@ -30,7 +30,7 @@ namespace Bank
             connection.Open();
             try
             {
-                return connection.QuerySingleFromFile<Account>(Queries.Bank.GetBankAccountByUserId, new {UserId = idpUser.Id });
+                return connection.QuerySingleFromFile<Account>(Queries.Bank.GetBankAccountByUserId, new { UserId = idpUser.Id });
             } catch
             {
                 connection.ExecuteFromFile(Queries.Bank.CreateBankAccount, new { UserId = idpUser.Id });
@@ -38,7 +38,7 @@ namespace Bank
             }
         }
 
-        public void DoTransaction()
+        public void DoTransaction(Account sender)
         {
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
@@ -58,6 +58,16 @@ namespace Bank
                     continue;
                 }
             }
+
+            float balance = connection.QuerySingleFromFile<BalanceQuery>(Queries.Bank.GetBalance, new { AccountId = sender.AccountId }).Balance;
+            float amountToTransfer;
+            do
+            {
+                amountToTransfer = Utils.PromptNumber("What amount will you transfer?: ");
+            }
+            while (amountToTransfer < 0 || amountToTransfer > balance);
+
         }
+
     }
 }
