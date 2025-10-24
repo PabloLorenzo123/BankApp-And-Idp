@@ -1,6 +1,0 @@
-{
-    "ConnectionStrings": {
-        "IDP": "Data Source=C:\\Users\\U1075\\OneDrive - Seguros Universal, C. por A\\Documents\\GitHub\\prueba.concepto\\Memento\\Data\\IDP\\idp.db",
-        "BANK": "Data Source=C:\\Users\\U1075\\OneDrive - Seguros Universal, C. por A\\Documents\\GitHub\\prueba.concepto\\Memento\\Data\\Bank\\bank.db"
-    }
-}

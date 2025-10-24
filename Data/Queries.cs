@@ -37,6 +37,7 @@
             public static readonly string GetBankAccountByUserId = Path.Combine(BaseDir, "GetBankAccountByUserId.sql");
             public static readonly string CreateBankAccount = Path.Combine(BaseDir, "CreateBankAccount.sql");
             public static readonly string GetBalance = Path.Combine(BaseDir, "GetBalance.sql");
+            public static readonly string TransferMoney = Path.Combine(BaseDir, "TransferMoney.sql");
         }
     }
 }

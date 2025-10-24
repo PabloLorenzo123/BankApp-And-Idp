@@ -15,9 +15,10 @@ public static class Program
 
         while (true)
         {
-            Console.WriteLine("1) Register an user in the IDP");
-            Console.WriteLine("2) Use Bank App");
-            int option = int.TryParse(Console.ReadLine(), out var input) ? input : throw new Exception("Please provide a number");
+            Console.WriteLine("1) Register an user in the Bank IDP.");
+            Console.WriteLine("2) Use Bank App.");
+            Console.WriteLine("3) Exit.");
+            int option = Utils.PromptNumber("Choose an option: ");
 
             switch (option)
             {
@@ -25,14 +26,20 @@ public static class Program
                     RegisterUser();
                     break;
                 case 2:
-                    Authenticate();
+                    UseBankApp();
+                    break;
+                case 3:
+                    return;
+                default:
+                    Console.WriteLine("Provide a correct option.");
                     break;
             }
         }
     }
 
     private static void RegisterUser() => _services.GetRequiredService<IDPApi>().SignUp();
-    private static void Authenticate()
+    
+    private static void UseBankApp()
     {
         var authentication = _services.GetRequiredService<Authentication>();
         var bankApi = _services.GetRequiredService<BankApi>();
@@ -42,16 +49,34 @@ public static class Program
 
         Console.WriteLine($"\nWelcome to the Bank App You're logged in as {bankAccount.AccountId}");
         Console.WriteLine("\nBalance: " + bankApi.GetBalance(bankAccount));
+
+        while (true)
+        {
+            Console.WriteLine();
+            Console.WriteLine("1) Transfer money.");
+            int option = Utils.PromptNumber("Choose an option: ");
+
+            switch (option)
+            {
+                case 1:
+                    bankApi.DoTransaction(bankAccount);
+                    break;
+                default:
+                    Console.WriteLine("Provide a correct option.");
+                    break;
+            }
+        }
     }
 
-    private static IServiceProvider ConstructDiContainer()
+    private static ServiceProvider ConstructDiContainer()
     {
+        var services = new ServiceCollection();
+
+        // Configuration.
         IConfiguration configuration = new ConfigurationBuilder()
             .AddJsonFile("settings.json")
             .Build();
-
-        var services = new ServiceCollection();
-        services.AddSingleton<IConfiguration>(configuration);
+        services.AddSingleton(configuration);
 
         // Services.
         services.AddScoped<UsersRepository>();

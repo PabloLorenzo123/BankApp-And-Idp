@@ -1,14 +1,9 @@
-﻿using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Bank.Entities;
+﻿using Bank.Entities;
 using Data;
 using Data.Extensions;
 using IDP;
-using IDP.DTOs;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Bank
 {
@@ -60,14 +55,36 @@ namespace Bank
             }
 
             float balance = connection.QuerySingleFromFile<BalanceQuery>(Queries.Bank.GetBalance, new { AccountId = sender.AccountId }).Balance;
+            if (balance <= 0)
+            {
+                Console.WriteLine($"You can't transfer, you don't have any balance");
+                return;
+            }
+
             float amountToTransfer;
-            do
+            while (true)
             {
                 amountToTransfer = Utils.PromptNumber("What amount will you transfer?: ");
+                if (amountToTransfer <= 0)
+                {
+                    Console.WriteLine("You can't transfer a negative amount, please provide something reasonable.");
+                    continue;
+                }
+                if (amountToTransfer > balance)
+                {
+                    Console.WriteLine($"You can't transfer more than your current balance, the transfer exceeds ${balance - amountToTransfer} your balance");
+                    continue;
+                }
+                break;
             }
-            while (amountToTransfer < 0 || amountToTransfer > balance);
 
+            connection.ExecuteFromFile(Queries.Bank.TransferMoney, new
+            {
+                Amount = amountToTransfer,
+                SenderId = sender.AccountId,
+                Receiver = receiver.AccountId,
+                Date = DateTime.Now.ToString()
+            });
         }
-
     }
 }
