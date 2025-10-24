@@ -12,9 +12,9 @@ namespace Memento
         public string _encodedJWTToken = string.Empty;
         private readonly OAuthClientConfiguration _clientConfiguration = new()
         {
-            ClientId = "my-api",
+            ClientId = "bankApp",
             ClientSecret = "secret",
-            RedirectUri = "https://my-front.com/user-signed-in"
+            RedirectUri = "https://bank-app.com/user-signed-in"
         };
         private readonly IDPApi _idpApi;
 
