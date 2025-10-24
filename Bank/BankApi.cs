@@ -2,18 +2,14 @@
 using Data;
 using Data.Extensions;
 using IDP;
-using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Configuration;
 
 namespace Bank
 {
-    public class BankApi(IConfiguration configuration, IDPApi idpApi)
+    public class BankApi(ConnectionFactory connectionFactory, IDPApi idpApi)
     {
-        private readonly string _connectionString = configuration.GetConnectionString("bank") ?? throw new Exception("Bank's connection string not found.");
-
         public float GetBalance(Account bankAccount)
         {
-            using var connection = new SqliteConnection(_connectionString);
+            using var connection = connectionFactory.CreateConnection(Connections.Bank);
             connection.Open();
             return connection.QuerySingleFromFile<BalanceQuery>(Queries.Bank.GetBalance, new { bankAccount.AccountId }).Balance;
         }
@@ -21,7 +17,7 @@ namespace Bank
         public Account GetBankAccount(string tokenSub)
         {
             var idpUser = idpApi.GetUserByUsername(tokenSub);
-            using var connection = new SqliteConnection(_connectionString);
+            using var connection = connectionFactory.CreateConnection(Connections.Bank);
             connection.Open();
             try
             {
@@ -35,7 +31,7 @@ namespace Bank
 
         public void DoTransaction(Account sender)
         {
-            using var connection = new SqliteConnection(_connectionString);
+            using var connection = connectionFactory.CreateConnection(Connections.Bank);
             connection.Open();
 
             Account receiver;

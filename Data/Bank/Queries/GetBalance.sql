@@ -1,17 +1,17 @@
 ﻿WITH
 debit AS (
 	SELECT
-	SUM("transactions"."amount") + SUM("transfers"."amount") AS 'amount',
+	COALESCE(SUM("transactions"."amount"), 0) + COALESCE(SUM("transfers"."amount"), 0) AS 'amount',
 	"accounts"."account_id" AS 'AccountId'
 	FROM "accounts"
-	LEFT JOIN "transactions" ON "transactions"."account_id" = "accounts"."account_id"AND type = 'DEPOSIT'
+	LEFT JOIN "transactions" ON "transactions"."account_id" = "accounts"."account_id" AND type = 'DEPOSIT'
 	LEFT JOIN "transfers" 	 ON "transfers"."receiver_id" = "accounts"."account_id"
-	WHERE "accounts"."account_id" = @AccountId
+	WHERE "accounts"."account_id" = 26
 	GROUP BY "accounts"."account_id"
 ),
 credit AS (
 	SELECT
-	SUM("transactions"."amount") + SUM("transfers"."amount") AS 'amount',
+	COALESCE(SUM("transactions"."amount"), 0) + COALESCE(SUM("transfers"."amount"), 0) AS 'amount',
 	"accounts"."account_id" AS 'AccountId'
  	FROM "accounts"
 	LEFT JOIN "transactions" ON "transactions"."account_id" = "accounts"."account_id"AND type = 'WITHDRAWAL'

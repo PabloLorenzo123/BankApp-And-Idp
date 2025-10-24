@@ -1,4 +1,5 @@
 ﻿using Bank;
+using Data;
 using IDP;
 using IDP.Repositories;
 using IDP.Services;
@@ -47,7 +48,7 @@ public static class Program
         var identityToken = authentication.DeseralizeToken(authentication.GetIdentityTokenUsingAuthCodeFlow());
         var bankAccount = bankApi.GetBankAccount(identityToken.Payload.Sub);
 
-        Console.WriteLine($"\nWelcome to the Bank App You're logged in as {bankAccount.AccountId}");
+        Console.WriteLine($"\nWelcome to the Bank App You're logged in as ID{bankAccount.AccountId}");
         Console.WriteLine("\nBalance: " + bankApi.GetBalance(bankAccount));
 
         while (true)
@@ -79,6 +80,7 @@ public static class Program
         services.AddSingleton(configuration);
 
         // Services.
+        services.AddScoped<ConnectionFactory>();
         services.AddScoped<UsersRepository>();
         services.AddScoped<IDPApi>();
         services.AddScoped<BankApi>();

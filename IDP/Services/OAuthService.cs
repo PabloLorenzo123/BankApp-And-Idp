@@ -5,27 +5,23 @@ using Data.IDP.Entities;
 using Data.Extensions;
 using IDP.Repositories;
 using Data;
-using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Configuration;
 
 namespace IDP.Services
 {
-    public class OAuthService(IConfiguration configuration, UsersRepository usersRepository, TokenGenerator tokenGenerator)
+    public class OAuthService(ConnectionFactory connectionFactory, UsersRepository usersRepository, TokenGenerator tokenGenerator)
     {
-        private readonly string _connectionString = configuration.GetConnectionString("IDP") ?? throw new InvalidOperationException("Connection string 'Default' not found.");
-
         public void RegisterOAuthClient(OAuthClientConfiguration clientConfiguration)
         {
-            using var connectionn = new SqliteConnection(_connectionString);
-            connectionn.Open();
+            using var connection = connectionFactory.CreateConnection(Connections.IDP);
+            connection.Open();
 
             try
             {
-                connectionn.QuerySingleFromFile<OAuthClient>(Queries.IDP.GetOAuthClientById, new { clientConfiguration.ClientId });
+                connection.QuerySingleFromFile<OAuthClient>(Queries.IDP.GetOAuthClientById, new { clientConfiguration.ClientId });
             }
             catch
             {
-                connectionn.ExecuteFromFile(Queries.IDP.CreateOAuthClient, new { clientConfiguration.ClientId, clientConfiguration.ClientSecret });
+                connection.ExecuteFromFile(Queries.IDP.CreateOAuthClient, new { clientConfiguration.ClientId, clientConfiguration.ClientSecret });
             }
         }
 
@@ -44,7 +40,7 @@ namespace IDP.Services
             // Create authorization code.
             var authorizationCode = Guid.NewGuid().ToString();
 
-            using var connection = new SqliteConnection(_connectionString);
+            using var connection = connectionFactory.CreateConnection(Connections.IDP);
             connection.Open();
             connection.ExecuteFromFile(Queries.IDP.CreateAuthCode, new { AuthorizationCode = authorizationCode, OAuthClientId = client_id, UserId = user.Id });
 
@@ -70,7 +66,7 @@ namespace IDP.Services
         private AuthorizationCode GetAuthCode(string authorizationCode, OAuthClientConfiguration oAuthClientConfiguration)
         {
             // Validate the authorization code is being used by the right person.
-            using var connection = new SqliteConnection(_connectionString);
+            using var connection = connectionFactory.CreateConnection(Connections.IDP);
 
             var authCode = connection.QuerySingleFromFile<AuthorizationCode>(Queries.IDP.GetAuthCode, new { Code = authorizationCode });
             var oAuthClient = connection.QuerySingleFromFile<OAuthClient>(Queries.IDP.GetOAuthClientById, new { ClientId = authCode.OAuthClientId });
