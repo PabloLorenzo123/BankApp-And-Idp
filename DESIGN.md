@@ -33,7 +33,7 @@ In this project idp.db is the IDP database, and bank.db is the Bank's online app
 * `logs`: log everything an user does related to financial movements.
 
 ### Relationships
-![Entity Relationship Diagram](ERD.png)
+![Entity Relationship Diagram](ER%20BankApp.png)
 
 #### IDP
 Users can have multiple rows that can have multiple claims, this define what they can do in an application.
@@ -55,6 +55,3 @@ In the bank's database two indexes were created.
 
 ## Limitations
 This database provides limited functionality compared to a bank's database. The purpose of this project lies on showing how IDP's and applications work together in enterprise applications.
-
-* What are the limitations of your design?
-* What might your database not be able to represent very well?
