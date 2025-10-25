@@ -2,6 +2,7 @@
 CREATE TABLE "accounts" (
 	"account_id" INTEGER,
 	"user_id" INTEGER NOT NULL,
+	"deleted" INTEGER DEFAULT 0,
 	PRIMARY KEY("account_id")
 );
 
@@ -35,7 +36,45 @@ CREATE TABLE "logs" (
 	FOREIGN KEY ("account_id") REFERENCES "accounts"("account_id") ON DELETE SET DEFAULT
 );
 
+-- VIEWS
+CREATE VIEW "Balance" AS
+WITH
+debit AS (
+	SELECT
+	COALESCE(SUM("transactions"."amount"), 0) + COALESCE(SUM("transfers"."amount"), 0) AS 'amount',
+	"accounts"."account_id" AS 'AccountId'
+	FROM "accounts"
+	LEFT JOIN "transactions" ON "transactions"."account_id" = "accounts"."account_id"AND type = 'DEPOSIT'
+	LEFT JOIN "transfers" 	 ON "transfers"."receiver_id" = "accounts"."account_id"
+	GROUP BY "accounts"."account_id"
+),
+credit AS (
+	SELECT
+	COALESCE(SUM("transactions"."amount"), 0) + COALESCE(SUM("transfers"."amount"), 0) AS 'amount',
+	"accounts"."account_id" AS 'AccountId'
+ 	FROM "accounts"
+	LEFT JOIN "transactions" ON "transactions"."account_id" = "accounts"."account_id"AND type = 'WITHDRAWAL'
+	LEFT JOIN "transfers" 	 ON "transfers"."sender_id" = "accounts"."account_id"
+	GROUP BY "accounts"."account_id"
+)
+SELECT
+"debit"."AccountId" AS "account_id",
+("debit"."amount" - "credit"."amount") AS 'Balance'
+FROM "debit"
+JOIN "credit" ON "debit"."AccountId" = "credit"."AccountId";
+
+CREATE VIEW "bank_accounts" AS SELECT * FROM "accounts";
+
 -- Triggers
+CREATE TRIGGER "account_soft_delete"
+INSTEAD OF DELETE ON "bank_accounts"
+FOR EACH ROW
+BEGIN
+	UPDATE "accounts"
+	SET "deleted" = 1
+	WHERE "accounts"."account_id" = OLD."account_id";
+END;
+
 CREATE TRIGGER "account_egress_transaction"
 AFTER INSERT ON "transactions"
 FOR EACH ROW WHEN NEW."type" = 'WITHDRAWAL'
@@ -74,33 +113,6 @@ BEGIN
 		NEW."receiver_id" || " received from a transfer $" || NEW."amount" || " from: " || NEW."sender_id" || " new balance: " || (SELECT "Balance" FROM "Balance" WHERE "account_id" = NEW."receiver_id")
 	);
 END;
-
--- VIEWS
-CREATE VIEW "Balance" AS
-WITH
-debit AS (
-	SELECT
-	COALESCE(SUM("transactions"."amount"), 0) + COALESCE(SUM("transfers"."amount"), 0) AS 'amount',
-	"accounts"."account_id" AS 'AccountId'
-	FROM "accounts"
-	LEFT JOIN "transactions" ON "transactions"."account_id" = "accounts"."account_id"AND type = 'DEPOSIT'
-	LEFT JOIN "transfers" 	 ON "transfers"."receiver_id" = "accounts"."account_id"
-	GROUP BY "accounts"."account_id"
-),
-credit AS (
-	SELECT
-	COALESCE(SUM("transactions"."amount"), 0) + COALESCE(SUM("transfers"."amount"), 0) AS 'amount',
-	"accounts"."account_id" AS 'AccountId'
- 	FROM "accounts"
-	LEFT JOIN "transactions" ON "transactions"."account_id" = "accounts"."account_id"AND type = 'WITHDRAWAL'
-	LEFT JOIN "transfers" 	 ON "transfers"."sender_id" = "accounts"."account_id"
-	GROUP BY "accounts"."account_id"
-)
-SELECT
-"debit"."AccountId" AS "account_id",
-("debit"."amount" - "credit"."amount") AS 'Balance'
-FROM "debit"
-JOIN "credit" ON "debit"."AccountId" = "credit"."AccountId";
 
 -- Data Seed
 
