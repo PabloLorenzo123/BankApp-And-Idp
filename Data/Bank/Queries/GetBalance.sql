@@ -6,7 +6,7 @@ debit AS (
 	FROM "accounts"
 	LEFT JOIN "transactions" ON "transactions"."account_id" = "accounts"."account_id" AND type = 'DEPOSIT'
 	LEFT JOIN "transfers" 	 ON "transfers"."receiver_id" = "accounts"."account_id"
-	WHERE "accounts"."account_id" = 26
+	WHERE "accounts"."account_id" = @AccountId
 	GROUP BY "accounts"."account_id"
 ),
 credit AS (

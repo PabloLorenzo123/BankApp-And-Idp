@@ -24,9 +24,11 @@ public static class Program
             switch (option)
             {
                 case 1:
+                    Console.Clear();
                     RegisterUser();
                     break;
                 case 2:
+                    Console.Clear();
                     UseBankApp();
                     break;
                 case 3:
@@ -42,12 +44,16 @@ public static class Program
     
     private static void UseBankApp()
     {
+        Console.Clear();
         var authentication = _services.GetRequiredService<Authentication>();
         var bankApi = _services.GetRequiredService<BankApi>();
 
         var identityToken = authentication.DeseralizeToken(authentication.GetIdentityTokenUsingAuthCodeFlow());
         var bankAccount = bankApi.GetBankAccount(identityToken.Payload.Sub);
+        Console.WriteLine("Press any key to continue.");
+        Console.ReadLine();
 
+        Console.Clear();
         Console.WriteLine($"\nWelcome to the Bank App You're logged in as ID{bankAccount.AccountId}");
         Console.WriteLine("\nBalance: " + bankApi.GetBalance(bankAccount));
 
@@ -55,13 +61,22 @@ public static class Program
         {
             Console.WriteLine();
             Console.WriteLine("1) Transfer money.");
+            Console.WriteLine("2) See logs.");
+            Console.WriteLine("3) Exit.");
             int option = Utils.PromptNumber("Choose an option: ");
 
             switch (option)
             {
                 case 1:
+                    Console.Clear();
                     bankApi.DoTransaction(bankAccount);
                     break;
+                case 2:
+                    bankApi.SeeLogs();
+                    break;
+                case 3:
+                    Console.Clear();
+                    return;
                 default:
                     Console.WriteLine("Provide a correct option.");
                     break;

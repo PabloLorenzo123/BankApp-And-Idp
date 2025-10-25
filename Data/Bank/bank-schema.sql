@@ -82,18 +82,18 @@ BEGIN
 	INSERT INTO "logs" ("account_id", "information")
 	VALUES (
 		NEW."account_id", 
-		NEW."account_id" || " withdraw $" || NEW."amount" || " from its account new balance: " || (SELECT "Balance" FROM "Balance" WHERE "account_id" = NEW."account_id")
+		"Account ID: " || NEW."account_id" || " withdraw $" || NEW."amount" || " from its account new balance: " || (SELECT "Balance" FROM "Balance" WHERE "account_id" = NEW."account_id")
 	);
 END;
 
 CREATE TRIGGER "account_ingress_transaction"
 AFTER INSERT ON "transactions"
-FOR EACH ROW WHEN NEW."type" = 'WITHDRAWAL'
+FOR EACH ROW WHEN NEW."type" = 'DEPOSIT'
 BEGIN
 	INSERT INTO "logs" ("account_id", "information")
 	VALUES (
 		NEW."account_id", 
-		NEW."account_id" || " deposited $" || NEW."amount" || " from its account new balance: " || (SELECT "Balance" FROM "Balance" WHERE "account_id" = NEW."account_id")
+		"Account ID: " || NEW."account_id" || " deposited $" || NEW."amount" || " from its account new balance: " || (SELECT "Balance" FROM "Balance" WHERE "account_id" = NEW."account_id")
 	);
 END;
 
@@ -104,65 +104,12 @@ BEGIN
 	INSERT INTO "logs" ("account_id", "information")
 	VALUES (
 		NEW."sender_id", 
-		NEW."sender_id" || " transfered $" || NEW."amount" || " to: " || NEW."receiver_id" || " new balance: " || (SELECT "Balance" FROM "Balance" WHERE "account_id" = NEW."sender_id")
+		"Account ID: " || NEW."sender_id" || " transfered $" || NEW."amount" || " to: " || "Account ID: " || NEW."receiver_id" || " new balance: " || (SELECT "Balance" FROM "Balance" WHERE "account_id" = NEW."sender_id")
 	);
 
 	INSERT INTO "logs" ("account_id", "information")
 	VALUES (
 		NEW."receiver_id", 
-		NEW."receiver_id" || " received from a transfer $" || NEW."amount" || " from: " || NEW."sender_id" || " new balance: " || (SELECT "Balance" FROM "Balance" WHERE "account_id" = NEW."receiver_id")
+		"Account ID: " || NEW."receiver_id" || " received from a transfer $" || NEW."amount" || " from: " || "Account ID: " || NEW."sender_id" || " new balance: " || (SELECT "Balance" FROM "Balance" WHERE "account_id" = NEW."receiver_id")
 	);
 END;
-
--- Data Seed
-
-INSERT INTO accounts (account_id, user_id) VALUES
-(1, 101), (2, 102), (3, 103), (4, 104), (5, 105),
-(6, 106), (7, 107), (8, 108), (9, 109), (10, 110),
-(11, 111), (12, 112), (13, 113), (14, 114), (15, 115),
-(16, 116), (17, 117), (18, 118), (19, 119), (20, 120);
-
-
-INSERT INTO transactions (transaction_id, amount, account_id, type) VALUES
-(1, 500, 1, 'DEPOSIT'),
-(2, 200, 1, 'WITHDRAWAL'),
-(3, 1000, 2, 'DEPOSIT'),
-(4, 300, 2, 'WITHDRAWAL'),
-(5, 1500, 3, 'DEPOSIT'),
-(6, 400, 3, 'WITHDRAWAL'),
-(7, 700, 4, 'DEPOSIT'),
-(8, 200, 5, 'DEPOSIT'),
-(9, 100, 5, 'WITHDRAWAL'),
-(10, 250, 6, 'DEPOSIT'),
-(11, 300, 7, 'DEPOSIT'),
-(12, 150, 8, 'WITHDRAWAL'),
-(13, 800, 9, 'DEPOSIT'),
-(14, 500, 10, 'DEPOSIT'),
-(15, 100, 11, 'WITHDRAWAL'),
-(16, 400, 12, 'DEPOSIT'),
-(17, 700, 13, 'DEPOSIT'),
-(18, 200, 14, 'WITHDRAWAL'),
-(19, 900, 15, 'DEPOSIT'),
-(20, 350, 16, 'DEPOSIT');
-
-INSERT INTO transfers (transfer_id, amount, sender_id, receiver_id) VALUES
-(1, 100, 1, 2),
-(2, 200, 2, 3),
-(3, 150, 3, 4),
-(4, 50, 4, 5),
-(5, 300, 5, 6),
-(6, 100, 6, 7),
-(7, 400, 7, 8),
-(8, 250, 8, 9),
-(9, 200, 9, 10),
-(10, 500, 10, 11),
-(11, 100, 11, 12),
-(12, 350, 12, 13),
-(13, 150, 13, 14),
-(14, 200, 14, 15),
-(15, 400, 15, 16),
-(16, 250, 16, 17),
-(17, 500, 17, 18),
-(18, 100, 18, 19),
-(19, 300, 19, 20),
-(20, 200, 20, 1);

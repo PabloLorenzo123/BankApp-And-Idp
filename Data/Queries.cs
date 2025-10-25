@@ -33,11 +33,12 @@
         {
             public static readonly string BaseDir = BaseDirectory + "/Bank/Queries";
 
-            public static readonly string GetAccountById = Path.Combine(BaseDir, "GetAccountById.sql");
+            public static readonly string GetAccountById = Path.Combine(BaseDir, "GetBankAccountById.sql");
             public static readonly string GetBankAccountByUserId = Path.Combine(BaseDir, "GetBankAccountByUserId.sql");
             public static readonly string CreateBankAccount = Path.Combine(BaseDir, "CreateBankAccount.sql");
             public static readonly string GetBalance = Path.Combine(BaseDir, "GetBalance.sql");
             public static readonly string TransferMoney = Path.Combine(BaseDir, "TransferMoney.sql");
+            public static readonly string SeeLogs = Path.Combine(BaseDir, "SeeLogs.sql");
         }
     }
 }

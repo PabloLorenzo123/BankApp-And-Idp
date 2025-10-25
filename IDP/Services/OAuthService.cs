@@ -27,7 +27,19 @@ namespace IDP.Services
 
         public string ValidateCredentialsAndGetAuthCode(string username, string password, string client_id)
         {
-            var user = usersRepository.Get(username);
+            User user;
+            while (true)
+            {
+                try
+                {
+                    user = usersRepository.Get(username);
+                    break;
+                } catch
+                {
+                    Console.WriteLine("There's not account with such username");
+                }
+
+            }
             var hasher = new HMACSHA512(user.PasswordSalt);
 
             // Authenticate

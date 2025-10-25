@@ -50,7 +50,7 @@ namespace Bank
                 }
             }
 
-            float balance = connection.QuerySingleFromFile<BalanceQuery>(Queries.Bank.GetBalance, new { AccountId = sender.AccountId }).Balance;
+            long balance = connection.QuerySingleFromFile<BalanceQuery>(Queries.Bank.GetBalance, new { AccountId = sender.AccountId }).Balance;
             if (balance <= 0)
             {
                 Console.WriteLine($"You can't transfer, you don't have any balance");
@@ -78,9 +78,26 @@ namespace Bank
             {
                 Amount = amountToTransfer,
                 SenderId = sender.AccountId,
-                Receiver = receiver.AccountId,
+                ReceiverId = receiver.AccountId,
                 Date = DateTime.Now.ToString()
             });
+        }
+
+        public void SeeLogs()
+        {
+            using var connection = connectionFactory.CreateConnection(Connections.Bank);
+            var logs = connection.QueryFromFile<Log>(Queries.Bank.SeeLogs, new { });
+            if (logs.Any())
+            {
+                foreach (var log in logs)
+                {
+                    Console.WriteLine(log.Information + " " + log.Date);
+                }
+            }
+            else
+            {
+                Console.WriteLine("No logs.");
+            }
         }
     }
 }
