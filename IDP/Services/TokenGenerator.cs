@@ -42,7 +42,7 @@ namespace IDP.Services
                 Iat = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds(),
                 Exp = ((DateTimeOffset)DateTime.UtcNow.AddHours(24)).ToUnixTimeSeconds(),
                 Jti = Guid.NewGuid(),
-                Roles = [],
+                Roles = _usersRepository.GetUserRoles(user),
                 Scopes = authCode.Scopes.Split(";")
             };
             var encodedPayload = Base64UrlEncoder.Encode(JsonSerializer.Serialize(payload));

@@ -25,7 +25,7 @@ namespace IDP.Services
             }
         }
 
-        public string ValidateCredentialsAndGetAuthCode(string username, string password, string client_id)
+        public string ValidateCredentialsAndGetAuthCode(string username, string password, string client_id, string scopes)
         {
             User user;
             try
@@ -50,7 +50,7 @@ namespace IDP.Services
 
             using var connection = connectionFactory.CreateConnection(Connections.IDP);
             connection.Open();
-            connection.ExecuteFromFile(Queries.IDP.CreateAuthCode, new { AuthorizationCode = authorizationCode, OAuthClientId = client_id, UserId = user.Id });
+            connection.ExecuteFromFile(Queries.IDP.CreateAuthCode, new { AuthorizationCode = authorizationCode, OAuthClientId = client_id, UserId = user.Id , Scopes = scopes});
 
             return authorizationCode;
         }

@@ -31,19 +31,19 @@ namespace Memento
         public string GetIdentityTokenUsingAuthCodeFlow()
         {
             var oAuthFlow = "authorization_code";
-            var scopes = string.Join(";", ["fullaccess"]);
+            var scopes = string.Join(";", ["openid"]);
 
             Console.WriteLine("Starting Authorization Code Flow...");
             Console.WriteLine("The client is being redirected to: ");
             Console.WriteLine(
-                string.Format("\nidentity-provider.com?client_id={0}&redirect_uri={1}&code={2}code&scope={3}", _clientConfiguration.ClientId, _clientConfiguration.RedirectUri, oAuthFlow, scopes)
+                string.Format("\nidentity-provider.com?client_id={0}&redirect_uri={1}&response_type={2}&scope={3}", _clientConfiguration.ClientId, _clientConfiguration.RedirectUri, oAuthFlow, scopes)
             );
             Console.WriteLine("\nYou're prompted to enter your credentials and consent the use of the scopes.");
 
             string username = Utils.PromptText("Enter username: ");
             string password = Utils.PromptText("Enter password: ");
 
-            Console.WriteLine($"Are you sure you want to provide {_clientConfiguration.ClientId} full access to your account?");
+            Console.WriteLine($"Are you sure you want to provide {_clientConfiguration.ClientId} access to your account's identity?");
             string consent = Console.ReadLine() ?? string.Empty;
 
             if (!consent.StartsWith("y", StringComparison.CurrentCultureIgnoreCase))
@@ -51,11 +51,11 @@ namespace Memento
                 throw new Exception("User needs to give its consent");
             }
 
-            var authorizationCode = _idpApi.ValidateCredentialsAndGetAuthCode(username, password, _clientConfiguration.ClientId);
+            var authorizationCode = _idpApi.ValidateCredentialsAndGetAuthCode(username, password, _clientConfiguration.ClientId, scopes);
 
             Console.WriteLine($"You're being redirected to: {_clientConfiguration.RedirectUri}?authorization_code={authorizationCode}");
             Console.WriteLine("Client (frontend) sends token to API, and API receives it.");
-            Console.WriteLine("Api Contacts the IDP server and ask to exchange the authorization code for an access token, using its OAuth Credentials.");
+            Console.WriteLine("Api Contacts the IDP server and ask to exchange the authorization code for an identity token, using its OAuth Credentials.");
 
             var idToken = _idpApi.GetAsymmetricAuthToken(authorizationCode, _clientConfiguration);
             

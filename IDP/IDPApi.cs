@@ -38,7 +38,7 @@ namespace IDP
 
         public void RegisterOAuthClient(OAuthClientConfiguration configuration) => oAuthService.RegisterOAuthClient(configuration);
 
-        public string ValidateCredentialsAndGetAuthCode(string username, string password, string client_id) => oAuthService.ValidateCredentialsAndGetAuthCode(username, password, client_id);
+        public string ValidateCredentialsAndGetAuthCode(string username, string password, string client_id, string scopes) => oAuthService.ValidateCredentialsAndGetAuthCode(username, password, client_id, scopes);
 
         public string GetAsymmetricAuthToken(string authorizationCode, OAuthClientConfiguration client) => oAuthService.GetAsymmetricAuthToken(authorizationCode, client);
 
