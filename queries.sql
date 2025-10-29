@@ -39,3 +39,15 @@ JOIN "credit" ON "debit"."AccountId" = "credit"."AccountId";
 -- Transfer money to another account.
 INSERT INTO "transfers" ("amount", "sender_id", "receiver_id", "date")
 VALUES (@Amount, @SenderId, @ReceiverId, @Date);
+
+-- IDP
+-- Create user and assing role
+BEGIN TRANSACTION;
+	-- Create user
+	INSERT INTO "USERS" ("username", "password_hash", "password_salt") VALUES (LOWER(@Username), @PasswordHash, @PasswordSalt);
+	-- Assign Role
+	INSERT INTO"USERS_ROLES" VALUES (
+		(SELECT "user_id" FROM "USERS" WHERE "username" = @Username),
+		(SELECT "role_id" FROM "ROLES" WHERE "name" LIKE 'customer')
+	);
+COMMIT;
