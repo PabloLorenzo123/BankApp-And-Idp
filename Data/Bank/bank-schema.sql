@@ -1,12 +1,12 @@
 ﻿-- Online Banking System --
-CREATE TABLE "accounts" (
+CREATE TABLE IF NOT EXISTS "accounts" (
 	"account_id" INTEGER,
 	"user_id" INTEGER NOT NULL,
 	"deleted" INTEGER DEFAULT 0,
 	PRIMARY KEY("account_id")
 );
 
-CREATE TABLE "transactions" (
+CREATE TABLE IF NOT EXISTS "transactions" (
 	"transaction_id" INTEGER,
 	"account_id" INTEGER,
 	"amount" INTEGER,
@@ -16,7 +16,7 @@ CREATE TABLE "transactions" (
 	FOREIGN KEY ("account_id") REFERENCES "accounts"("account_id")
 );
 
-CREATE TABLE "transfers" (
+CREATE TABLE IF NOT EXISTS "transfers" (
 	"transfer_id" INTEGER,
 	"amount" INTEGER NOT NULL,
 	"sender_id" INTEGER CHECK("sender_id" != "receiver_id") NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE "transfers" (
 	FOREIGN KEY ("receiver_id") REFERENCES "accounts"("account_id")
 );
 
-CREATE TABLE "logs" (
+CREATE TABLE IF NOT EXISTS "logs" (
 	"log_id" INTEGER,
 	"account_id" INTEGER NOT NULL DEFAULT 0,
 	"information" VARCHAR(250) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE "logs" (
 );
 
 -- VIEWS
-CREATE VIEW "Balance" AS
+CREATE VIEW IF NOT EXISTS "Balance" AS
 WITH
 debit AS (
 	SELECT
@@ -63,10 +63,10 @@ SELECT
 FROM "debit"
 JOIN "credit" ON "debit"."AccountId" = "credit"."AccountId";
 
-CREATE VIEW "bank_accounts" AS SELECT * FROM "accounts";
+CREATE VIEW IF NOT EXISTS "bank_accounts" AS SELECT * FROM "accounts";
 
 -- Triggers
-CREATE TRIGGER "account_soft_delete"
+CREATE TRIGGER IF NOT EXISTS "account_soft_delete"
 INSTEAD OF DELETE ON "bank_accounts"
 FOR EACH ROW
 BEGIN
@@ -75,7 +75,7 @@ BEGIN
 	WHERE "accounts"."account_id" = OLD."account_id";
 END;
 
-CREATE TRIGGER "account_egress_transaction"
+CREATE TRIGGER IF NOT EXISTS "account_egress_transaction"
 AFTER INSERT ON "transactions"
 FOR EACH ROW WHEN NEW."type" = 'WITHDRAWAL'
 BEGIN
@@ -86,7 +86,7 @@ BEGIN
 	);
 END;
 
-CREATE TRIGGER "account_ingress_transaction"
+CREATE TRIGGER IF NOT EXISTS "account_ingress_transaction"
 AFTER INSERT ON "transactions"
 FOR EACH ROW WHEN NEW."type" = 'DEPOSIT'
 BEGIN
@@ -97,7 +97,7 @@ BEGIN
 	);
 END;
 
-CREATE TRIGGER "account_transfers"
+CREATE TRIGGER IF NOT EXISTS "account_transfers"
 AFTER INSERT ON "transfers"
 FOR EACH ROW
 BEGIN
@@ -113,3 +113,11 @@ BEGIN
 		"Account ID: " || NEW."receiver_id" || " received from a transfer $" || NEW."amount" || " from: " || "Account ID: " || NEW."sender_id" || " new balance: " || (SELECT "Balance" FROM "Balance" WHERE "account_id" = NEW."receiver_id")
 	);
 END;
+
+
+-- Indexes.
+CREATE INDEX IF NOT EXISTS "transaction_by_user"
+ON "transactions"("account_id");
+
+CREATE INDEX IF NOT EXISTS "logs_date"
+ON "logs"("date");

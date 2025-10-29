@@ -41,6 +41,11 @@ namespace Bank
                 {
                     var sendTo = Utils.PromptNumber("What account (id) will you transfer to?: ");
                     receiver = connection.QuerySingleFromFile<Account>(Queries.Bank.GetAccountById, new { AccountId = sendTo });
+                    if (receiver.AccountId == sender.AccountId)
+                    {
+                        Console.WriteLine("Cant' transfer money to yourself.");
+                        continue;
+                    }
                     break;
                 }
                 catch

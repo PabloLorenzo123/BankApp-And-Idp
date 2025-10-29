@@ -1,12 +1,12 @@
-﻿DROP TABLE "transactions";
-DROP TABLE "transfers";
-DROP TABLE "logs";
-DROP TABLE "accounts";
+﻿DROP TABLE IF EXISTS "transactions";
+DROP TABLE IF EXISTS "transfers";
+DROP TABLE IF EXISTS"logs";
+DROP TABLE IF EXISTS "accounts";
 
-DROP VIEW "Balance";
-DROP VIEW "bank_accounts";
+DROP VIEW IF EXISTS "Balance";
+DROP VIEW IF EXISTS "bank_accounts";
 
-DROP TRIGGER "account_soft_delete";
-DROP TRIGGER "account_egress_transaction";
-DROP TRIGGER "account_ingress_transaction";
-DROP TRIGGER "account_transfers";
+DROP TRIGGER IF EXISTS "account_soft_delete";
+DROP TRIGGER IF EXISTS "account_egress_transaction";
+DROP TRIGGER IF EXISTS "account_ingress_transaction";
+DROP TRIGGER IF EXISTS "account_transfers";

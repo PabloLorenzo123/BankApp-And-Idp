@@ -45,5 +45,12 @@ namespace IDP.Repositories
             connection.Open();
             return connection.QuerySingleFromFile<User>(Queries.IDP.GetUserById, new { Id = id });
         }
+
+        public IEnumerable<string> GetUserRoles(User user)
+        {
+            using var connection = connectionFactory.CreateConnection(Connections.IDP);
+            connection.Open();
+            return connection.QueryFromFile<string>(Queries.IDP.GetUserRoles, new {UserId = user.Id});
+        }
     }
 }

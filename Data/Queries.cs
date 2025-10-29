@@ -27,6 +27,8 @@
             public static readonly string GetAuthCode = Path.Combine(BaseDir, "GetAuthCode.sql");
 
             public static readonly string CreateAuthCode = Path.Combine(BaseDir, "CreateAuthorizationCode.sql");
+
+            public static readonly string GetUserRoles = Path.Combine(BaseDir, "GetUserRoles.sql");
         }
 
         public static class Bank

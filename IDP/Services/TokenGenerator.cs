@@ -4,18 +4,22 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using IDP.Repositories;
 
 namespace IDP.Services
 {
     public class TokenGenerator
     {
+        private readonly UsersRepository _usersRepository;
+
         private const string _symmetricSigningKey = "key-used-for-both-signing-and-validating";
         
         public readonly byte[] publicKey;
         private readonly byte[] _privateKey;
 
-        public TokenGenerator()
+        public TokenGenerator(UsersRepository usersRepository)
         {
+            _usersRepository = usersRepository;
             (publicKey, _privateKey) = GenerateKeyPair();
         }
 
@@ -75,7 +79,7 @@ namespace IDP.Services
                 Iat = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds(),
                 Exp = ((DateTimeOffset)DateTime.UtcNow.AddHours(24)).ToUnixTimeSeconds(),
                 Jti = Guid.NewGuid(),
-                Roles = [],
+                Roles = _usersRepository.GetUserRoles(user),
                 Scopes = authCode.Scopes.Split(";")
             };
             var encodedPayload = Base64UrlEncoder.Encode(JsonSerializer.Serialize(payload));
@@ -96,7 +100,7 @@ namespace IDP.Services
         private static (byte[], byte[]) GenerateKeyPair()
         {
             using RSA rsa = RSA.Create(2048); // 2048 bit key size.
-            var publicKey = rsa.ExportRSAPublicKey(); // Used for verifyng signature hasn't been tampered with, i takes the input hasheds it with the key and compare values.
+            var publicKey = rsa.ExportRSAPublicKey(); // Used for verifyng signature hasn't been tampered with, it takes the hashed input  and compares it with signature^e % d where e and d is the public key.
             var privateKey = rsa.ExportRSAPrivateKey(); // Used for creating the signature.
             return (publicKey, privateKey);
         }

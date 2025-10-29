@@ -89,7 +89,7 @@ namespace IDP.DTOs
             /// Roles
             /// </summary>
             [JsonPropertyName("roles")]
-            public string[] Roles { get; set; } = [];
+            public IEnumerable<string> Roles { get; set; } = [];
 
             /// <summary>
             /// Scopes.

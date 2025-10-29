@@ -10,6 +10,7 @@ namespace Memento
     public class Authentication
     {
         public string _encodedJWTToken = string.Empty;
+        private readonly JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
         private readonly OAuthClientConfiguration _clientConfiguration = new()
         {
             ClientId = "bankApp",
@@ -56,15 +57,20 @@ namespace Memento
             Console.WriteLine("Client (frontend) sends token to API, and API receives it.");
             Console.WriteLine("Api Contacts the IDP server and ask to exchange the authorization code for an access token, using its OAuth Credentials.");
 
-            var accesToken = _idpApi.GetAsymmetricAuthToken(authorizationCode, _clientConfiguration);
-            Console.WriteLine("JWT Token: " + accesToken);
+            var idToken = _idpApi.GetAsymmetricAuthToken(authorizationCode, _clientConfiguration);
+            
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\nJWT Token Base4url: " + idToken);
+            Console.WriteLine("\nDeserealized token:");
+            Console.WriteLine(JsonSerializer.Serialize(DeseralizeToken(idToken), jsonSerializerOptions));
+            Console.ResetColor();
 
             Console.WriteLine("The API now needs to validate that the token really comes from the IDP (in this case the one who grants and bear the token are different servers).");
             
-            if (ValidateToken(accesToken))
+            if (ValidateToken(idToken))
             {
-                _encodedJWTToken = accesToken;
-                return accesToken;
+                _encodedJWTToken = idToken;
+                return idToken;
             } else
             {
                 throw new Exception("The JWT has been tampered with.");

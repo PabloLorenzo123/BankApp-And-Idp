@@ -16,6 +16,7 @@ public static class Program
 
         while (true)
         {
+            Console.Clear();
             Console.WriteLine("1) Register an user in the Bank IDP.");
             Console.WriteLine("2) Use Bank App.");
             Console.WriteLine("3) Exit.");
