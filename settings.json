@@ -1,0 +1,6 @@
+{
+    "ConnectionStrings": {
+        "IDP": "Data Source=PROJECT_PATH\\Data\\IDP\\idp.db",
+        "BANK": "Data Source=PROJECT_PATH\\Data\\Bank\\bank.db"
+    }
+}
