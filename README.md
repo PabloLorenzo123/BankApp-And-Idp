@@ -4,8 +4,19 @@ By Pablo Lorenzo
 
 Video overview: [Demo](https://youtu.be/z3Xj8uyYM28?si=sYfwwzowZXfFexmu)
 
-## Scope
+## How to Set Up
+1) Modify the connection strings in `settings.json` with the actual paths of the databases.
+2) Make sure you have `sqlite3` installed and added to your Path Environment Variables, [download sqlite3 here](https://sqlite.org/download.html).
+3) There's already an `IDP.db` and `Bank.db` database with data, you can choose to clean them by doing the following steps.
+4) First open the database with `sqlite3 path_to_your_db/name_of_your_db.db`.
+5) Drop everything with `.read path_to_file/reset-db.sql` these `reset-db.sql` files are inside `Data/Bank` and `Data/Idp` use the correct sql files depending on the db you're working with. Do this with each database.
+6) Fill the databases with `.read path_to_file/schema.sql` these are in the same directory as the reset-db.sql files.
 
+Finally to run the program
+1) Make sure you have .NET 9 runtime installed, [download .net](https://dotnet.microsoft.com/en-us/download).
+2) Finally inside the app directory execute `dotnet run`.
+
+## Scope
 This is a bank application that uses two SQLite databases. Most banking systems include an Identity Provider (IDP) and Resource server, to allow IDP-Authenticated users to access the bank's different applications.
 In this project idp.db is the IDP database, and bank.db is the Bank's online application database, the first saves identity information such as users, roles, oauth clients and authorization codes while the former saves user's bank accounts, transactions and transfers. The purpose of this system is for users to log in to their bank accounts and perform transactions using a simple console API. This functionality is achieved by using code that execute raw queries saved in `Data/Bank/Queries` and `Data/Idp/Queries`. This project highlights how modern applications handle authentication with IDPS and provide API's that at the lowest level simply execute SQL queries without the need of using ORMs or other abstractions.
 
