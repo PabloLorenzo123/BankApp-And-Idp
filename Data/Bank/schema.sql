@@ -10,21 +10,28 @@ CREATE TABLE IF NOT EXISTS "transactions" (
 	"transaction_id" INTEGER,
 	"account_id" INTEGER,
 	"amount" INTEGER,
-	"type" VARCHAR(250) CHECK("type" in ('DEPOSIT', 'WITHDRAWAL')),
+	"type" VARCHAR(250),
 	"date" DATETIME DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY ("transaction_id"),
-	FOREIGN KEY ("account_id") REFERENCES "accounts"("account_id")
+	CONSTRAINT "fk_account"
+	    FOREIGN KEY ("account_id") REFERENCES "accounts"("account_id"),
+	CONSTRAINT "valid_type"
+		CHECK("type" in ('DEPOSIT', 'WITHDRAWAL'))
 );
 
 CREATE TABLE IF NOT EXISTS "transfers" (
 	"transfer_id" INTEGER,
 	"amount" INTEGER NOT NULL,
-	"sender_id" INTEGER CHECK("sender_id" != "receiver_id") NOT NULL,
+	"sender_id" INTEGER NOT NULL,
 	"receiver_id" INTEGER NOT NULL,
 	"date" DATETIME DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY("transfer_id"),
-	FOREIGN KEY ("sender_id") REFERENCES "accounts"("account_id"),
-	FOREIGN KEY ("receiver_id") REFERENCES "accounts"("account_id")
+	CONSTRAINT "FK_SENDER"
+		FOREIGN KEY ("sender_id") REFERENCES "accounts"("account_id"),
+	CONSTRAINT "FK_RECEIVER"
+		FOREIGN KEY ("receiver_id") REFERENCES "accounts"("account_id"),
+	CONSTRAINT "SENDER_IS_DIFFERENT_FROM_RECEIVER"
+		CHECK("sender_id" != "receiver_id")
 );
 
 CREATE TABLE IF NOT EXISTS "logs" (

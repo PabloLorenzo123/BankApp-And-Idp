@@ -11,8 +11,10 @@ CREATE TABLE IF NOT EXISTS "users_roles" (
 	"user_id" INTEGER,
 	"role_id" INTEGER,
 	PRIMARY KEY ("user_id", "role_id"),
-	FOREIGN KEY ("user_id") REFERENCES "users"("user_id"),
-	FOREIGN KEY ("role_id") REFERENCES "roles"("role_id")
+	CONSTRAINT "ROLE_ASSOCIATED_TO_USER"
+		FOREIGN KEY ("user_id") REFERENCES "users"("user_id"),
+	CONSTRAINT "FK_ROLE"
+		FOREIGN KEY ("role_id") REFERENCES "roles"("role_id")
 );
 
 CREATE TABLE IF NOT EXISTS "roles" (
@@ -25,8 +27,10 @@ CREATE TABLE IF NOT EXISTS "roles_claims" (
 	"role_id" INTEGER,
 	"claim_id" INTEGER,
 	PRIMARY KEY ("role_id", "claim_id"),
-	FOREIGN KEY ("role_id") REFERENCES "roles"("role_id"),
-	FOREIGN KEY ("claim_id") REFERENCES "claims"("claim_id")
+	CONSTRAINT "FK_ROLE"
+		FOREIGN KEY ("role_id") REFERENCES "roles"("role_id"),
+	CONSTRAINT "FK_CLAIM"
+		FOREIGN KEY ("claim_id") REFERENCES "claims"("claim_id")
 );
 
 CREATE TABLE IF NOT EXISTS "claims" (
@@ -47,8 +51,10 @@ CREATE TABLE IF NOT EXISTS "authorization_codes" (
 	"user_id" INTEGER,
 	"scopes" VARCHAR(255),
 	PRIMARY KEY ("authorization_code"),
-	FOREIGN KEY ("oauth_client_id") REFERENCES "oauth_clients"("client_id"),
-	FOREIGN KEY ("user_id") REFERENCES "users"("user_id")
+	CONSTRAINT "ASSOCIATED_CLIENT"
+		FOREIGN KEY ("oauth_client_id") REFERENCES "oauth_clients"("client_id"),
+	CONSTRAINT "USER_TO_GET_TOKEN_FROM"
+		FOREIGN KEY ("user_id") REFERENCES "users"("user_id")
 );
 
 -- Seed
